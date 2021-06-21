@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import Layout from "../../components/Layout";
 import Button from "../../components/Button";
+import * as ListPrimitive from "../../components/List";
 import { apiUrl, appUrl } from "../../lib/config";
 import { CheckCircleIcon, PencilAltIcon } from "@heroicons/react/outline";
 import {
@@ -13,7 +14,7 @@ import {
   ShareIcon,
 } from "@heroicons/react/solid";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Seo from "../../components/Seo";
 
 const getList = async (listId: string) => {
@@ -123,10 +124,10 @@ function List(props: IListProps) {
             <header>
               <div className="flex flex-col">
                 <div className="flex items-center justify-between">
-                  <Link href="/">
-                    <span className="inline-flex items-center link space-x-2">
+                  <Link passHref href="/">
+                    <a className="inline-flex items-center link space-x-2">
                       <ArrowLeftIcon className="w-4" /> <span>Back</span>
-                    </span>
+                    </a>
                   </Link>
 
                   <div className="flex items-center space-x-6">
@@ -160,7 +161,7 @@ function List(props: IListProps) {
                       onClick={async () => {
                         try {
                           await window.navigator.share();
-                          toast.success("Shared successfully");
+                          toast.success("Shared successfully!");
                         } catch (err) {
                           toast.error(`Failed to share List`);
                         }
@@ -179,31 +180,28 @@ function List(props: IListProps) {
             <hr className="my-6 dark:border-gray-700" />
 
             <section>
-              <ul className="mt-8 overflow-hidden bg-white shadow dark:bg-gray-800 rounded-md divide-y dark:divide-gray-700">
+              <ListPrimitive.Wrapper>
                 {data.items.map((item) => (
-                  <li
-                    className="p-4 hover:bg-gray-50 dark:hover:bg-[#252f3d]"
-                    key={item.id}
-                  >
+                  <ListPrimitive.Item key={item.id}>
                     <ListItem
                       onUpdate={onUpdateListItem}
                       passphrase={passphrase}
                       listItem={item}
                     />
-                  </li>
+                  </ListPrimitive.Item>
                 ))}
+              </ListPrimitive.Wrapper>
 
-                {passphrase && (
-                  <Button
-                    onClick={() => onCreateListItem()}
-                    className={`w-full ${
-                      data.items.length ? "rounded-t-none" : ""
-                    }`}
-                  >
-                    New List Item
-                  </Button>
-                )}
-              </ul>
+              {passphrase && (
+                <Button
+                  onClick={() => onCreateListItem()}
+                  className={`float-right mt-6 ${
+                    !data?.items?.length && "w-full"
+                  }`}
+                >
+                  New List Item
+                </Button>
+              )}
             </section>
           </div>
         ) : isValidating ? (
@@ -284,6 +282,8 @@ function ListItem({ listItem, onUpdate, passphrase }: IListItemProps) {
 List.getInitialProps = async ({ query }) => {
   if (query.id) {
     const list = await getList(query.id);
+
+    console.log(list);
 
     return {
       list,
