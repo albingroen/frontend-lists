@@ -53,11 +53,11 @@ export default function Home() {
           </p>
         </header>
 
-        <hr className="my-8 dark:border-gray-700" />
+        <hr className="my-6 dark:border-gray-700" />
 
         <section>
           <Button
-            className="flex items-center justify-between w-full"
+            className="flex items-center justify-between w-full mt-8"
             onClick={() => onCreateList()}
           >
             <span></span>

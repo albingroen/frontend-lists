@@ -13,7 +13,7 @@ import {
   ShareIcon,
 } from "@heroicons/react/solid";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Seo from "../../components/Seo";
 
 const getList = async (listId: string) => {
@@ -90,11 +90,12 @@ function List(props: IListProps) {
   };
 
   const onAuthenticate = async () => {
-    const inputPassphrase = prompt("List passphrase:");
+    const inputPassphrase = prompt("Passphrase:");
 
     toast.promise(
       authenticateList(query.id as string, inputPassphrase).then(() => {
         setPassphrase(inputPassphrase);
+        localStorage.setItem(`${data.id}_passphrase`, inputPassphrase);
       }),
       {
         loading: "Authenticating...",
@@ -102,6 +103,10 @@ function List(props: IListProps) {
         error: "Incorrect passphrase",
       }
     );
+  };
+
+  const getPassphraseFromSession = () => {
+    return localStorage.getItem(`${data.id}_passphrase`);
   };
 
   return (
@@ -124,13 +129,18 @@ function List(props: IListProps) {
                     </span>
                   </Link>
 
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-6">
                     <button
                       onClick={() => {
                         if (passphrase) {
                           setPassphrase(undefined);
                         } else {
-                          onAuthenticate();
+                          const sessionPassphrase = getPassphraseFromSession();
+                          if (sessionPassphrase) {
+                            setPassphrase(sessionPassphrase);
+                          } else {
+                            onAuthenticate();
+                          }
                         }
                       }}
                       className="inline-flex items-center link space-x-2"
@@ -166,12 +176,15 @@ function List(props: IListProps) {
               </div>
             </header>
 
-            <hr className="my-8 dark:border-gray-700" />
+            <hr className="my-6 dark:border-gray-700" />
 
             <section>
-              <ul className="mt-8 bg-white shadow dark:bg-gray-800 rounded-md divide-y dark:divide-gray-700 overflow-none">
+              <ul className="mt-8 overflow-hidden bg-white shadow dark:bg-gray-800 rounded-md divide-y dark:divide-gray-700">
                 {data.items.map((item) => (
-                  <li key={item.id} className="p-4">
+                  <li
+                    className="p-4 hover:bg-gray-50 dark:hover:bg-[#252f3d]"
+                    key={item.id}
+                  >
                     <ListItem
                       onUpdate={onUpdateListItem}
                       passphrase={passphrase}
@@ -229,7 +242,7 @@ function ListItem({ listItem, onUpdate, passphrase }: IListItemProps) {
     <div className="flex items-center justify-between space-x-4">
       {isEditing ? (
         <input
-          className="flex-1 rounded focus:outline-none focus:ring-2"
+          className="flex-1 bg-transparent rounded focus:outline-none focus:ring-2"
           onChange={(e) => setTitle(e.currentTarget.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
