@@ -144,8 +144,8 @@ function ListItem({ listItem, onUpdate }: IListItemProps) {
     <div className="flex items-center justify-between space-x-4">
       {isEditing ? (
         <input
+          className="flex-1 rounded focus:outline-none focus:ring-2"
           onChange={(e) => setTitle(e.currentTarget.value)}
-          className="flex-1 rounded outline-none focus:ring-2"
           placeholder="Name"
           value={title}
           type="text"
@@ -156,7 +156,7 @@ function ListItem({ listItem, onUpdate }: IListItemProps) {
       )}
 
       <button
-        className="text-blue-500 transition hover:text-blue-700"
+        className="text-blue-500 rounded transition hover:text-blue-400 active:text-blue-700 focus:ring-2 focus:outline-none"
         aria-label={isEditing ? "Save" : "Edit title"}
         title={isEditing ? "Save" : "Edit title"}
         onClick={() => {
