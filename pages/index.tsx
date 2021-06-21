@@ -53,7 +53,7 @@ export default function Home() {
           </p>
         </header>
 
-        <hr className="my-8" />
+        <hr className="my-8 dark:border-gray-700" />
 
         <section>
           <Button

@@ -119,7 +119,7 @@ function List(props: IListProps) {
               <div className="flex flex-col">
                 <div className="flex items-center justify-between">
                   <Link href="/">
-                    <span className="inline-flex items-center text-blue-500 cursor-pointer transition-none hover:text-blue-700 space-x-2">
+                    <span className="inline-flex items-center link space-x-2">
                       <ArrowLeftIcon className="w-4" /> <span>Back</span>
                     </span>
                   </Link>
@@ -133,7 +133,7 @@ function List(props: IListProps) {
                           onAuthenticate();
                         }
                       }}
-                      className="inline-flex items-center text-blue-500 cursor-pointer transition-none hover:text-blue-700 space-x-2"
+                      className="inline-flex items-center link space-x-2"
                     >
                       {passphrase ? (
                         <>
@@ -155,7 +155,7 @@ function List(props: IListProps) {
                           toast.error(`Failed to share List`);
                         }
                       }}
-                      className="inline-flex items-center text-blue-500 cursor-pointer transition-none hover:text-blue-700 space-x-2"
+                      className="inline-flex items-center link space-x-2"
                     >
                       <ShareIcon className="w-4" /> <span>Share List</span>
                     </button>
@@ -166,10 +166,10 @@ function List(props: IListProps) {
               </div>
             </header>
 
-            <hr className="my-8" />
+            <hr className="my-8 dark:border-gray-700" />
 
             <section>
-              <ul className="mt-8 bg-white shadow rounded-md divide-y overflow-none">
+              <ul className="mt-8 bg-white shadow dark:bg-gray-800 rounded-md divide-y dark:divide-gray-700 overflow-none">
                 {data.items.map((item) => (
                   <li key={item.id} className="p-4">
                     <ListItem
