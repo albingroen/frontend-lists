@@ -6,7 +6,12 @@ import Layout from "../../components/Layout";
 import Button from "../../components/Button";
 import { apiUrl, appUrl } from "../../lib/config";
 import { CheckCircleIcon, PencilAltIcon } from "@heroicons/react/outline";
-import { ArrowNarrowLeftIcon as ArrowLeftIcon } from "@heroicons/react/solid";
+import {
+  ArrowNarrowLeftIcon as ArrowLeftIcon,
+  CheckIcon,
+  PencilIcon,
+  ShareIcon,
+} from "@heroicons/react/solid";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import Seo from "../../components/Seo";
@@ -31,12 +36,20 @@ const updateListItem = async (
     .then((res) => res.data);
 };
 
+const authenticateList = async (id: string, passphrase: string) => {
+  return axios.post(`${apiUrl}/lists/${id}/auth`, {
+    passphrase,
+  });
+};
+
 interface IListProps {
   list: { title: string; id: string; items: { title: string; id: string }[] };
 }
 
 function List(props: IListProps) {
   const { query } = useRouter();
+
+  const [passphrase, setPassphrase] = useState<string>();
 
   const { data, error, mutate, isValidating } = useSWR(
     query.id ? `lists/${query.id}` : null,
@@ -76,6 +89,21 @@ function List(props: IListProps) {
     );
   };
 
+  const onAuthenticate = async () => {
+    const inputPassphrase = prompt("List passphrase:");
+
+    toast.promise(
+      authenticateList(query.id as string, inputPassphrase).then(() => {
+        setPassphrase(inputPassphrase);
+      }),
+      {
+        loading: "Authenticating...",
+        success: "Passphrase correct!",
+        error: "Incorrect passphrase",
+      }
+    );
+  };
+
   return (
     <>
       <Seo
@@ -89,14 +117,52 @@ function List(props: IListProps) {
           <div>
             <header>
               <div className="flex flex-col">
-                <Link href="/">
-                  <span className="inline-flex items-center text-blue-500 cursor-pointer transition-none hover:text-blue-700 space-x-2">
-                    <ArrowLeftIcon className="w-4" /> <span>Back</span>
-                  </span>
-                </Link>
-                <h1 className="mt-6 font-mono text-3xl tracking-wide">
-                  {data.title}
-                </h1>
+                <div className="flex items-center justify-between">
+                  <Link href="/">
+                    <span className="inline-flex items-center text-blue-500 cursor-pointer transition-none hover:text-blue-700 space-x-2">
+                      <ArrowLeftIcon className="w-4" /> <span>Back</span>
+                    </span>
+                  </Link>
+
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => {
+                        if (passphrase) {
+                          setPassphrase(undefined);
+                        } else {
+                          onAuthenticate();
+                        }
+                      }}
+                      className="inline-flex items-center text-blue-500 cursor-pointer transition-none hover:text-blue-700 space-x-2"
+                    >
+                      {passphrase ? (
+                        <>
+                          <CheckIcon className="w-4" /> <span>Done</span>
+                        </>
+                      ) : (
+                        <>
+                          <PencilIcon className="w-4" /> <span>Edit List</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={async () => {
+                        try {
+                          await window.navigator.share();
+                          toast.success("Shared successfully");
+                        } catch (err) {
+                          toast.error(`Failed to share List`);
+                        }
+                      }}
+                      className="inline-flex items-center text-blue-500 cursor-pointer transition-none hover:text-blue-700 space-x-2"
+                    >
+                      <ShareIcon className="w-4" /> <span>Share List</span>
+                    </button>
+                  </div>
+                </div>
+
+                <h1 className="mt-6 font-mono text-2xl">{data.title}</h1>
               </div>
             </header>
 
@@ -105,19 +171,25 @@ function List(props: IListProps) {
             <section>
               <ul className="mt-8 bg-white shadow rounded-md divide-y overflow-none">
                 {data.items.map((item) => (
-                  <li key={item.key} className="p-4">
-                    <ListItem onUpdate={onUpdateListItem} listItem={item} />
+                  <li key={item.id} className="p-4">
+                    <ListItem
+                      onUpdate={onUpdateListItem}
+                      passphrase={passphrase}
+                      listItem={item}
+                    />
                   </li>
                 ))}
 
-                <Button
-                  onClick={() => onCreateListItem()}
-                  className={`w-full ${
-                    data.items.length ? "rounded-t-none" : ""
-                  }`}
-                >
-                  New List Item
-                </Button>
+                {passphrase && (
+                  <Button
+                    onClick={() => onCreateListItem()}
+                    className={`w-full ${
+                      data.items.length ? "rounded-t-none" : ""
+                    }`}
+                  >
+                    New List Item
+                  </Button>
+                )}
               </ul>
             </section>
           </div>
@@ -134,9 +206,10 @@ function List(props: IListProps) {
 interface IListItemProps {
   onUpdate: (id: string, data: { title: string }) => void;
   listItem: { id: string; title: string };
+  passphrase: string;
 }
 
-function ListItem({ listItem, onUpdate }: IListItemProps) {
+function ListItem({ listItem, onUpdate, passphrase }: IListItemProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [title, setTitle] = useState<string>(listItem.title);
 
@@ -177,18 +250,20 @@ function ListItem({ listItem, onUpdate }: IListItemProps) {
         <h3>{title}</h3>
       )}
 
-      <button
-        className="text-blue-500 rounded transition hover:text-blue-400 active:text-blue-700 focus:ring-2 focus:outline-none"
-        aria-label={isEditing ? "Save" : "Edit title"}
-        title={isEditing ? "Save" : "Edit title"}
-        onClick={handleChange}
-      >
-        {isEditing ? (
-          <CheckCircleIcon className="w-5" />
-        ) : (
-          <PencilAltIcon className="w-5" />
-        )}
-      </button>
+      {passphrase && (
+        <button
+          className="text-blue-500 rounded transition hover:text-blue-400 active:text-blue-700 focus:ring-2 focus:outline-none"
+          aria-label={isEditing ? "Save" : "Edit title"}
+          title={isEditing ? "Save" : "Edit title"}
+          onClick={handleChange}
+        >
+          {isEditing ? (
+            <CheckCircleIcon className="w-5" />
+          ) : (
+            <PencilAltIcon className="w-5" />
+          )}
+        </button>
+      )}
     </div>
   );
 }
