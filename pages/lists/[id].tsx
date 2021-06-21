@@ -140,12 +140,34 @@ function ListItem({ listItem, onUpdate }: IListItemProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [title, setTitle] = useState<string>(listItem.title);
 
+  const handleChange = () => {
+    if (isEditing) {
+      setIsEditing(false);
+
+      if (title === listItem.title) return;
+
+      onUpdate(listItem.id, { title });
+    } else {
+      setIsEditing(!isEditing);
+    }
+  };
+
   return (
     <div className="flex items-center justify-between space-x-4">
       {isEditing ? (
         <input
           className="flex-1 rounded focus:outline-none focus:ring-2"
           onChange={(e) => setTitle(e.currentTarget.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleChange();
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              e.stopPropagation();
+              setTitle(listItem.title);
+              setIsEditing(false);
+            }
+          }}
           placeholder="Name"
           value={title}
           type="text"
@@ -159,17 +181,7 @@ function ListItem({ listItem, onUpdate }: IListItemProps) {
         className="text-blue-500 rounded transition hover:text-blue-400 active:text-blue-700 focus:ring-2 focus:outline-none"
         aria-label={isEditing ? "Save" : "Edit title"}
         title={isEditing ? "Save" : "Edit title"}
-        onClick={() => {
-          if (isEditing) {
-            setIsEditing(false);
-
-            if (title === listItem.title) return;
-
-            onUpdate(listItem.id, { title });
-          } else {
-            setIsEditing(!isEditing);
-          }
-        }}
+        onClick={handleChange}
       >
         {isEditing ? (
           <CheckCircleIcon className="w-5" />
