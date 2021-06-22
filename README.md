@@ -1,34 +1,45 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Weblists (frontend)
 
-## Getting Started
+Create and share a list with anyone on the web, without creating an account.
 
-First, run the development server:
+_Create your first list here: [www.weblists.io](https://www.weblists.io)_
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Technology
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This frontend communicates with a REST web server, that you can find the code for [here](https://github.com/albingroen/service-lists).
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- Web framework: **React (Next.js)**
+- Networking: **SWR & Axios**
+- Styling: **Tailwind CSS**
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## Developing
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Start by forking this repository, and then cloning the fork to your computer. Since this is a JavaScript app, you have to start by installing the dependencies specified in `package.json`. To do this, you run the following command.
 
-## Learn More
+    yarn
 
-To learn more about Next.js, take a look at the following resources:
+If you'd rather use npm, you can run the following command instead.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+### Starting the project
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+To start the project, run the dev command.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+    yarn dev
+
+Same here, if you want to use npm, you can run the following command instead.
+
+    npm run dev
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests & documentation as appropriate.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
