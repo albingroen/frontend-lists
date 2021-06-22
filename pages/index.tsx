@@ -77,12 +77,10 @@ export default function Home() {
           {lists?.length ? (
             <List.Wrapper>
               {lists.map((list) => (
-                <Link passHref href={`/lists/${list.id}`} key={list.id}>
-                  <a>
-                    <List.Item className="cursor-pointer">
-                      <h3>{list.title}</h3>
-                    </List.Item>
-                  </a>
+                <Link href={`/lists/${list.id}`} key={list.id}>
+                  <List.Item className="cursor-pointer">
+                    <h3>{list.title}</h3>
+                  </List.Item>
                 </Link>
               ))}
             </List.Wrapper>
