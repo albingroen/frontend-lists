@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import Seo from "../../components/Seo";
 import copy from "copy-to-clipboard";
+import Empty from "../../components/Empty";
 
 const getList = async (listId: string) => {
   return axios.get(`${apiUrl}/lists/${listId}`).then((res) => res.data);
@@ -229,7 +230,7 @@ function List(props: IListProps) {
 
             <section>
               {data?.items?.length ? (
-                <ListPrimitive.Wrapper className="mb-6">
+                <ListPrimitive.Wrapper>
                   {data.items.map((item) => (
                     <ListPrimitive.Item key={item.id}>
                       <ListItem
@@ -240,12 +241,16 @@ function List(props: IListProps) {
                     </ListPrimitive.Item>
                   ))}
                 </ListPrimitive.Wrapper>
-              ) : null}
+              ) : (
+                <Empty>You have not added any items yet...</Empty>
+              )}
 
               {isEditing && (
                 <Button
                   onClick={() => onCreateListItem()}
-                  className={`float-right ${!data?.items?.length && "w-full"}`}
+                  className={`float-right mt-6 ${
+                    !data?.items?.length && "w-full"
+                  }`}
                 >
                   New List Item
                 </Button>
@@ -257,9 +262,7 @@ function List(props: IListProps) {
         ) : error ? (
           <p>Failed to retrieve list (${error.message})</p>
         ) : (
-          <div className="flex items-center justify-center p-10 text-center border border-gray-300 border-dashed rounded-md">
-            <p className="text-gray-500">This list does not exist anymore...</p>
-          </div>
+          <Empty>This list does not exist anymore...</Empty>
         )}
       </Layout>
     </>

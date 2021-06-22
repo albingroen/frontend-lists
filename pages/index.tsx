@@ -8,6 +8,7 @@ import Seo from "../components/Seo";
 import * as List from "../components/List";
 import { apiUrl, appUrl } from "../lib/config";
 import { useEffect, useState } from "react";
+import Empty from "../components/Empty";
 
 const createList = (data: { title: string; passphrase: string }) => {
   return axios.post(apiUrl + "/lists", data);
@@ -72,7 +73,7 @@ export default function Home() {
 
         <section>
           {lists?.length ? (
-            <List.Wrapper className="mb-6">
+            <List.Wrapper>
               {lists.map((list) => (
                 <Link passHref href={`/lists/${list.id}`} key={list.id}>
                   <a>
@@ -83,10 +84,14 @@ export default function Home() {
                 </Link>
               ))}
             </List.Wrapper>
-          ) : null}
+          ) : (
+            <Empty>You have not created any lists yet...</Empty>
+          )}
 
           <Button
-            className={`float-right space-x-2 ${!lists?.length && "w-full"}`}
+            className={`float-right mt-6 space-x-2 ${
+              !lists?.length && "w-full"
+            }`}
             onClick={() => onCreateList()}
           >
             <span>Create new List</span>
