@@ -228,7 +228,7 @@ function List(props: IListProps) {
                     <button
                       onClick={async () => {
                         try {
-                          await window.navigator.share();
+                          await window.navigator.share({ url: location.href });
                           toast.success("Shared successfully!");
                         } catch (err) {
                           try {
