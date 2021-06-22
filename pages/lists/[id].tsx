@@ -5,7 +5,7 @@ import useSWR from "swr";
 import Layout from "../../components/Layout";
 import Button from "../../components/Button";
 import * as ListPrimitive from "../../components/List";
-import { apiUrl, appUrl } from "../../lib/config";
+import { apiUrl, appUrl, siteInfo } from "../../lib/config";
 import {
   CheckCircleIcon,
   PencilAltIcon,
@@ -179,6 +179,7 @@ function List(props: IListProps) {
         description="Create text lists and share them with anyone"
         url={data ? `${appUrl}/lists/${data.title}` : appUrl}
         title={`${data?.title || "Loading..."} | Lists`}
+        image={siteInfo.image}
       />
 
       <Layout>

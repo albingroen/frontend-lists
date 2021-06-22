@@ -3,12 +3,18 @@ import Head from "next/head";
 interface ISeoProps {
   description: string;
   keywords?: string[];
-  image?: string;
   title: string;
+  image: string;
   url: string;
 }
 
-export default function Seo({ description, keywords, title, url }: ISeoProps) {
+export default function Seo({
+  description,
+  keywords,
+  image,
+  title,
+  url,
+}: ISeoProps) {
   return (
     <Head>
       <title>{title}</title>
@@ -26,6 +32,12 @@ export default function Seo({ description, keywords, title, url }: ISeoProps) {
       <meta property="twitter:url" content={url} />
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
+
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:image" content={image} />
+      <meta property="og:image" content={image} />
+      <meta itemProp="image" content={image} />
+      <meta content={image} name="image" />
     </Head>
   );
 }

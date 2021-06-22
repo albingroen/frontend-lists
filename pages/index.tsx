@@ -58,6 +58,7 @@ export default function Home() {
       <Seo
         description={siteInfo.description}
         title={siteInfo.title}
+        image={siteInfo.image}
         url={appUrl}
       />
 
