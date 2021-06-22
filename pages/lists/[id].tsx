@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import Seo from "../../components/Seo";
 import copy from "copy-to-clipboard";
 import Empty from "../../components/Empty";
+import Footer from "../../components/Footer";
 
 const getList = async (listId: string) => {
   return axios.get(`${apiUrl}/lists/${listId}`).then((res) => res.data);
@@ -273,14 +274,14 @@ function List(props: IListProps) {
               {isEditing && (
                 <Button
                   onClick={() => onCreateListItem()}
-                  className={`float-right mt-6 ${
-                    !data?.items?.length && "w-full"
-                  }`}
+                  className="w-full mt-6"
                 >
                   New List Item
                 </Button>
               )}
             </section>
+
+            <Footer />
           </div>
         ) : isValidating ? (
           <p>Retrieving list...</p>

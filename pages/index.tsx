@@ -9,6 +9,7 @@ import * as List from "../components/List";
 import { apiUrl, appUrl, siteInfo } from "../lib/config";
 import { useEffect, useState } from "react";
 import Empty from "../components/Empty";
+import Footer from "../components/Footer";
 
 const createList = (data: { title: string; passphrase: string }) => {
   return axios.post(apiUrl + "/lists", data);
@@ -90,15 +91,15 @@ export default function Home() {
           )}
 
           <Button
-            className={`float-right mt-6 space-x-2 ${
-              !lists?.length && "w-full"
-            }`}
+            className="w-full mt-6 space-x-2"
             onClick={() => onCreateList()}
           >
             <span>Create new List</span>
             <span>&rarr;</span>
           </Button>
         </section>
+
+        <Footer />
       </Layout>
     </>
   );

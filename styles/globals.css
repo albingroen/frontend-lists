@@ -8,5 +8,5 @@ html {
 @tailwind utilities;
 
 .link {
-  @apply text-blue-500 cursor-pointer dark:text-blue-400 transition-none hover:text-blue-700 dark:hover:text-blue-600;
+  @apply text-blue-500 cursor-pointer transition-none hover:text-blue-700 dark:hover:text-blue-600;
 }
