@@ -387,8 +387,6 @@ List.getInitialProps = async ({ query }) => {
   if (query.id) {
     const list = await getList(query.id);
 
-    console.log(list);
-
     return {
       list,
     };

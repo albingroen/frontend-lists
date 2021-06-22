@@ -1,6 +1,6 @@
-export const apiUrl = "http://localhost:5000";
+export const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const appUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : "http://lists-app.vercel.app";
+    : "https://frontend-lists.vercel.app";
