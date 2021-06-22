@@ -9,7 +9,7 @@ export function Wrapper({
     <ul
       {...rest}
       className={[
-        "overflow-hidden shadow rounded-md divide-y dark:divide-gray-700",
+        "overflow-hidden shadow rounded-md divide-y dark:divide-gray-700 dark:border dark:border-[#252f3d]",
         className,
       ]
         .filter(Boolean)
