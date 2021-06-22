@@ -29,29 +29,56 @@ const getList = async (listId: string) => {
   return axios.get(`${apiUrl}/lists/${listId}`).then((res) => res.data);
 };
 
-const createListItem = async (listId: string, data: { title: string }) => {
+const createListItem = async (
+  listId: string,
+  data: { title: string },
+  ctx: { passphrase: string }
+) => {
   return axios
-    .post(`${apiUrl}/lists/${listId}/list-items`, data)
+    .post(`${apiUrl}/lists/${listId}/list-items`, data, {
+      headers: {
+        Authentication: ctx.passphrase,
+      },
+    })
     .then((res) => res.data);
 };
 
-const deleteList = async (listId: string) => {
-  return axios.delete(`${apiUrl}/lists/${listId}`).then((res) => res.data);
+const deleteList = async (listId: string, ctx: { passphrase: string }) => {
+  return axios
+    .delete(`${apiUrl}/lists/${listId}`, {
+      headers: {
+        Authentication: ctx.passphrase,
+      },
+    })
+    .then((res) => res.data);
 };
 
 const updateListItem = async (
   listId: string,
   id: string,
-  data: { title: string }
+  data: { title: string },
+  ctx: { passphrase: string }
 ) => {
   return axios
-    .put(`${apiUrl}/lists/${listId}/list-items/${id}`, data)
+    .put(`${apiUrl}/lists/${listId}/list-items/${id}`, data, {
+      headers: {
+        Authentication: ctx.passphrase,
+      },
+    })
     .then((res) => res.data);
 };
 
-const deleteListItem = async (listId: string, id: string) => {
+const deleteListItem = async (
+  listId: string,
+  id: string,
+  ctx: { passphrase: string }
+) => {
   return axios
-    .delete(`${apiUrl}/lists/${listId}/list-items/${id}`)
+    .delete(`${apiUrl}/lists/${listId}/list-items/${id}`, {
+      headers: {
+        Authentication: ctx.passphrase,
+      },
+    })
     .then((res) => res.data);
 };
 
@@ -85,7 +112,7 @@ function List(props: IListProps) {
     }
 
     toast.promise(
-      createListItem(query.id as string, { title }).then(() => {
+      createListItem(query.id as string, { title }, { passphrase }).then(() => {
         mutate();
       }),
       {
@@ -98,7 +125,7 @@ function List(props: IListProps) {
 
   const onUpdateListItem = (id: string, data: { title: string }) => {
     toast.promise(
-      updateListItem(query.id as string, id, data).then(() => {
+      updateListItem(query.id as string, id, data, { passphrase }).then(() => {
         mutate();
       }),
       {
@@ -111,7 +138,7 @@ function List(props: IListProps) {
 
   const onDeleteListItem = (id: string) => {
     toast.promise(
-      deleteListItem(query.id as string, id).then(() => {
+      deleteListItem(query.id as string, id, { passphrase }).then(() => {
         mutate();
       }),
       {
@@ -142,7 +169,7 @@ function List(props: IListProps) {
   const onDelete = () => {
     if (confirm(`Do you want to delete the list: ${data.title}?`)) {
       toast.promise(
-        deleteList(query.id as string).then(() => {
+        deleteList(query.id as string, { passphrase }).then(() => {
           try {
             const lcLists = JSON.parse(localStorage.getItem("lists"));
             localStorage.setItem(
@@ -385,7 +412,7 @@ function ListItem({
   );
 }
 
-List.getInitialProps = async ({ query }) => {
+List.getInitialProps = async ({ query, req }) => {
   if (query.id) {
     const list = await getList(query.id);
 
