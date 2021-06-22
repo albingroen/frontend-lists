@@ -6,9 +6,9 @@ export const appUrl =
     : "https://frontend-lists.vercel.app";
 
 export const siteInfo = {
-  title: "Lists | Create text lists and share them with anyone",
+  title: "Weblists | Create text lists and share them with anyone",
   description:
-    "Using Lists you can create and share a list of text items with anyone on the web, without creating an account.",
+    "Create and share a list with anyone on the web, without creating an account.",
   image:
-    "https://res.cloudinary.com/albin-groen/image/upload/v1624352276/lists-seo_ioddtt.png",
+    "https://res.cloudinary.com/albin-groen/image/upload/v1624364659/weblists-seo_vaudjk.png",
 };

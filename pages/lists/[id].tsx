@@ -178,7 +178,7 @@ function List(props: IListProps) {
       <Seo
         description="Create text lists and share them with anyone"
         url={data ? `${appUrl}/lists/${data.title}` : appUrl}
-        title={`${data?.title || "Loading..."} | Lists`}
+        title={`${data?.title || "Loading..."} | Weblists`}
         image={siteInfo.image}
       />
 

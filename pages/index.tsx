@@ -64,10 +64,10 @@ export default function Home() {
 
       <Layout>
         <header>
-          <h1 className="font-mono text-3xl tracking-wide uppercase">Lists</h1>
-          <p className="mt-4 text-gray-500">
-            Create text lists and share them with anyone
-          </p>
+          <h1 className="font-mono text-3xl tracking-wide uppercase">
+            Weblists
+          </h1>
+          <p className="mt-4 text-gray-500">{siteInfo.description}</p>
         </header>
 
         <hr className="my-6 dark:border-gray-700" />
