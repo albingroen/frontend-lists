@@ -16,6 +16,7 @@ import {
 import toast from "react-hot-toast";
 import { useState } from "react";
 import Seo from "../../components/Seo";
+import copy from "copy-to-clipboard";
 
 const getList = async (listId: string) => {
   return axios.get(`${apiUrl}/lists/${listId}`).then((res) => res.data);
@@ -163,7 +164,12 @@ function List(props: IListProps) {
                           await window.navigator.share();
                           toast.success("Shared successfully!");
                         } catch (err) {
-                          toast.error(`Failed to share List`);
+                          try {
+                            copy(location.href);
+                            toast.success("Link copied to clipboard!");
+                          } catch {
+                            toast.error(`Failed to share List`);
+                          }
                         }
                       }}
                       className="inline-flex items-center link space-x-2"
