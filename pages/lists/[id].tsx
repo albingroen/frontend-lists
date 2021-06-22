@@ -95,7 +95,7 @@ interface IListProps {
 function List(props: IListProps) {
   const { query, push } = useRouter();
 
-  const [isEditing, setIsEditing] = useState<boolean>(Boolean(query.edit));
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [passphrase, setPassphrase] = useState<string>();
 
   const { data, error, mutate, isValidating } = useSWR(

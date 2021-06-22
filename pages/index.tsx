@@ -35,7 +35,7 @@ export default function Home() {
       createList({ title, passphrase }).then((res) => {
         localStorage.setItem("lists", JSON.stringify([...lists, res.data]));
         localStorage.setItem(`${res.data.id}_passphrase`, passphrase);
-        router.push(`/lists/${res.data.id}?edit=true`);
+        router.push(`/lists/${res.data.id}`);
       }),
       {
         loading: "Creating list...",
