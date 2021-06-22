@@ -71,8 +71,8 @@ export default function Home() {
         <hr className="my-6 dark:border-gray-700" />
 
         <section>
-          {lists?.length && (
-            <List.Wrapper>
+          {lists?.length ? (
+            <List.Wrapper className="mb-6">
               {lists.map((list) => (
                 <Link passHref href={`/lists/${list.id}`} key={list.id}>
                   <a>
@@ -83,12 +83,10 @@ export default function Home() {
                 </Link>
               ))}
             </List.Wrapper>
-          )}
+          ) : null}
 
           <Button
-            className={`float-right mt-6 space-x-2 ${
-              !lists?.length && "w-full"
-            }`}
+            className={`float-right space-x-2 ${!lists?.length && "w-full"}`}
             onClick={() => onCreateList()}
           >
             <span>Create new List</span>

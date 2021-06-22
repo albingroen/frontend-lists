@@ -12,9 +12,10 @@ import {
   CheckIcon,
   PencilIcon,
   ShareIcon,
+  TrashIcon,
 } from "@heroicons/react/solid";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Seo from "../../components/Seo";
 import copy from "copy-to-clipboard";
 
@@ -22,10 +23,14 @@ const getList = async (listId: string) => {
   return axios.get(`${apiUrl}/lists/${listId}`).then((res) => res.data);
 };
 
-const createList = async (listId: string, data: { title: string }) => {
+const createListItem = async (listId: string, data: { title: string }) => {
   return axios
     .post(`${apiUrl}/lists/${listId}/list-items`, data)
     .then((res) => res.data);
+};
+
+const deleteList = async (listId: string) => {
+  return axios.delete(`${apiUrl}/lists/${listId}`).then((res) => res.data);
 };
 
 const updateListItem = async (
@@ -49,8 +54,9 @@ interface IListProps {
 }
 
 function List(props: IListProps) {
-  const { query } = useRouter();
+  const { query, push } = useRouter();
 
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [passphrase, setPassphrase] = useState<string>();
 
   const { data, error, mutate, isValidating } = useSWR(
@@ -67,7 +73,7 @@ function List(props: IListProps) {
     }
 
     toast.promise(
-      createList(query.id as string, { title }).then(() => {
+      createListItem(query.id as string, { title }).then(() => {
         mutate();
       }),
       {
@@ -96,8 +102,9 @@ function List(props: IListProps) {
 
     toast.promise(
       authenticateList(query.id as string, inputPassphrase).then(() => {
-        setPassphrase(inputPassphrase);
         localStorage.setItem(`${data.id}_passphrase`, inputPassphrase);
+        setPassphrase(inputPassphrase);
+        setIsEditing(true);
       }),
       {
         loading: "Authenticating...",
@@ -107,9 +114,40 @@ function List(props: IListProps) {
     );
   };
 
-  const getPassphraseFromSession = () => {
-    return localStorage.getItem(`${data.id}_passphrase`);
+  const onDelete = () => {
+    if (confirm(`Do you want to delete the list: ${data.title}?`)) {
+      toast.promise(
+        deleteList(query.id as string).then(() => {
+          try {
+            const lcLists = JSON.parse(localStorage.getItem("lists"));
+            localStorage.setItem(
+              "lists",
+              JSON.stringify(lcLists.filter((list) => list.id !== query.id))
+            );
+            localStorage.removeItem(`${query.id}_passphrase`);
+            push("/");
+          } catch {
+            push("/");
+          }
+        }),
+        {
+          loading: "Deleting List...",
+          success: "List deleted!",
+          error: "Failed to delete List",
+        }
+      );
+    }
   };
+
+  useEffect(() => {
+    if (data?.id) {
+      const lcPassphrase = localStorage.getItem(`${data.id}_passphrase`);
+
+      if (lcPassphrase) {
+        setPassphrase(lcPassphrase);
+      }
+    }
+  }, [data?.id]);
 
   return (
     <>
@@ -132,22 +170,26 @@ function List(props: IListProps) {
                   </Link>
 
                   <div className="flex items-center space-x-6">
+                    {isEditing && (
+                      <button
+                        className="inline-flex items-center link space-x-2"
+                        onClick={async () => onDelete()}
+                      >
+                        <TrashIcon className="w-4" /> <span>Delete List</span>
+                      </button>
+                    )}
+
                     <button
                       onClick={() => {
                         if (passphrase) {
-                          setPassphrase(undefined);
+                          setIsEditing(!isEditing);
                         } else {
-                          const sessionPassphrase = getPassphraseFromSession();
-                          if (sessionPassphrase) {
-                            setPassphrase(sessionPassphrase);
-                          } else {
-                            onAuthenticate();
-                          }
+                          onAuthenticate();
                         }
                       }}
                       className="inline-flex items-center link space-x-2"
                     >
-                      {passphrase ? (
+                      {isEditing ? (
                         <>
                           <CheckIcon className="w-4" /> <span>Done</span>
                         </>
@@ -186,24 +228,24 @@ function List(props: IListProps) {
             <hr className="my-6 dark:border-gray-700" />
 
             <section>
-              <ListPrimitive.Wrapper>
-                {data.items.map((item) => (
-                  <ListPrimitive.Item key={item.id}>
-                    <ListItem
-                      onUpdate={onUpdateListItem}
-                      passphrase={passphrase}
-                      listItem={item}
-                    />
-                  </ListPrimitive.Item>
-                ))}
-              </ListPrimitive.Wrapper>
+              {data?.items?.length ? (
+                <ListPrimitive.Wrapper className="mb-6">
+                  {data.items.map((item) => (
+                    <ListPrimitive.Item key={item.id}>
+                      <ListItem
+                        onUpdate={onUpdateListItem}
+                        passphrase={passphrase}
+                        listItem={item}
+                      />
+                    </ListPrimitive.Item>
+                  ))}
+                </ListPrimitive.Wrapper>
+              ) : null}
 
-              {passphrase && (
+              {isEditing && (
                 <Button
                   onClick={() => onCreateListItem()}
-                  className={`float-right mt-6 ${
-                    !data?.items?.length && "w-full"
-                  }`}
+                  className={`float-right ${!data?.items?.length && "w-full"}`}
                 >
                   New List Item
                 </Button>
@@ -212,8 +254,12 @@ function List(props: IListProps) {
           </div>
         ) : isValidating ? (
           <p>Retrieving list...</p>
+        ) : error ? (
+          <p>Failed to retrieve list (${error.message})</p>
         ) : (
-          error && <p>Failed to retrieve list (${error.message})</p>
+          <div className="flex items-center justify-center p-10 text-center border border-gray-300 border-dashed rounded-md">
+            <p className="text-gray-500">This list does not exist anymore...</p>
+          </div>
         )}
       </Layout>
     </>
