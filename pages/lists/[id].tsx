@@ -6,7 +6,11 @@ import Layout from "../../components/Layout";
 import Button from "../../components/Button";
 import * as ListPrimitive from "../../components/List";
 import { apiUrl, appUrl } from "../../lib/config";
-import { CheckCircleIcon, PencilAltIcon } from "@heroicons/react/outline";
+import {
+  CheckCircleIcon,
+  PencilAltIcon,
+  TrashIcon as TrashIconOutline,
+} from "@heroicons/react/outline";
 import {
   ArrowNarrowLeftIcon as ArrowLeftIcon,
   CheckIcon,
@@ -41,6 +45,12 @@ const updateListItem = async (
 ) => {
   return axios
     .put(`${apiUrl}/lists/${listId}/list-items/${id}`, data)
+    .then((res) => res.data);
+};
+
+const deleteListItem = async (listId: string, id: string) => {
+  return axios
+    .delete(`${apiUrl}/lists/${listId}/list-items/${id}`)
     .then((res) => res.data);
 };
 
@@ -94,6 +104,19 @@ function List(props: IListProps) {
         loading: "Updating item...",
         success: "Item updated!",
         error: "Failed to update item",
+      }
+    );
+  };
+
+  const onDeleteListItem = (id: string) => {
+    toast.promise(
+      deleteListItem(query.id as string, id).then(() => {
+        mutate();
+      }),
+      {
+        loading: "Deleting item...",
+        success: "Item deleted!",
+        error: "Failed to delete item",
       }
     );
   };
@@ -235,7 +258,8 @@ function List(props: IListProps) {
                     <ListPrimitive.Item key={item.id}>
                       <ListItem
                         onUpdate={onUpdateListItem}
-                        passphrase={passphrase}
+                        onDelete={onDeleteListItem}
+                        isEditingList={isEditing}
                         listItem={item}
                       />
                     </ListPrimitive.Item>
@@ -272,10 +296,16 @@ function List(props: IListProps) {
 interface IListItemProps {
   onUpdate: (id: string, data: { title: string }) => void;
   listItem: { id: string; title: string };
-  passphrase: string;
+  onDelete: (id: string) => void;
+  isEditingList: boolean;
 }
 
-function ListItem({ listItem, onUpdate, passphrase }: IListItemProps) {
+function ListItem({
+  isEditingList,
+  listItem,
+  onUpdate,
+  onDelete,
+}: IListItemProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [title, setTitle] = useState<string>(listItem.title);
 
@@ -288,6 +318,12 @@ function ListItem({ listItem, onUpdate, passphrase }: IListItemProps) {
       onUpdate(listItem.id, { title });
     } else {
       setIsEditing(!isEditing);
+    }
+  };
+
+  const handleDelete = () => {
+    if (confirm(`Do you want to delete the list item: ${listItem.title}?`)) {
+      onDelete(listItem.id);
     }
   };
 
@@ -316,20 +352,33 @@ function ListItem({ listItem, onUpdate, passphrase }: IListItemProps) {
         <h3>{title}</h3>
       )}
 
-      {passphrase && (
-        <button
-          className="text-blue-500 rounded transition hover:text-blue-400 active:text-blue-700 focus:ring-2 focus:outline-none"
-          aria-label={isEditing ? "Save" : "Edit title"}
-          title={isEditing ? "Save" : "Edit title"}
-          onClick={handleChange}
-        >
-          {isEditing ? (
-            <CheckCircleIcon className="w-5" />
-          ) : (
-            <PencilAltIcon className="w-5" />
-          )}
-        </button>
-      )}
+      <div className="flex items-center space-x-4">
+        {isEditingList && (
+          <button
+            className="rounded link focus:ring-2 focus:outline-none"
+            aria-label={isEditing ? "Save" : "Edit title"}
+            title={isEditing ? "Save" : "Edit title"}
+            onClick={handleChange}
+          >
+            {isEditing ? (
+              <CheckCircleIcon className="w-5" />
+            ) : (
+              <PencilAltIcon className="w-5" />
+            )}
+          </button>
+        )}
+
+        {isEditingList && (
+          <button
+            className="rounded link focus:ring-2 focus:outline-none"
+            onClick={handleDelete}
+            aria-label="Delete"
+            title="Delete"
+          >
+            <TrashIconOutline className="w-5" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
