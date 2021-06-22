@@ -6,7 +6,7 @@ import Layout from "../components/Layout";
 import Button from "../components/Button";
 import Seo from "../components/Seo";
 import * as List from "../components/List";
-import { apiUrl, appUrl } from "../lib/config";
+import { apiUrl, appUrl, siteInfo } from "../lib/config";
 import { useEffect, useState } from "react";
 import Empty from "../components/Empty";
 
@@ -56,8 +56,8 @@ export default function Home() {
   return (
     <>
       <Seo
-        description="Create text lists and share them with anyone"
-        title="Lists"
+        description={siteInfo.description}
+        title={siteInfo.title}
         url={appUrl}
       />
 
