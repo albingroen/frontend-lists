@@ -31,6 +31,17 @@ export default function Footer() {
           src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=301235&theme=light"
           alt="Weblists - Create and share lists with anyone on the web | Product Hunt"
           style={{ width: 250, height: 54 }}
+          className="block dark:hidden"
+          width={250}
+          height={54}
+        />
+
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=301235&theme=dark"
+          alt="Weblists - Create and share lists with anyone on the web | Product Hunt"
+          style={{ width: 250, height: 54 }}
+          className="hidden dark:block"
           width={250}
           height={54}
         />
