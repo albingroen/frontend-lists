@@ -19,6 +19,22 @@ export default function Footer() {
         </a>
         .
       </p>
+
+      <a
+        href="https://www.producthunt.com/posts/weblists?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-weblists"
+        className="block mt-8 transform scale-90 origin-top-left"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=301235&theme=light"
+          alt="Weblists - Create and share lists with anyone on the web | Product Hunt"
+          style={{ width: 250, height: 54 }}
+          width={250}
+          height={54}
+        />
+      </a>
     </footer>
   );
 }
