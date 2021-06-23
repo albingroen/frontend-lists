@@ -295,7 +295,7 @@ function List(props: IListProps) {
                   ))}
                 </ListPrimitive.Wrapper>
               ) : (
-                <Empty>You have not added any items yet...</Empty>
+                <Empty>No items added to this list yet...</Empty>
               )}
 
               {isEditing && (
